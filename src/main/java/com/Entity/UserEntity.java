@@ -1,11 +1,18 @@
 package com.Entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "User_Details")
 public class UserEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +22,16 @@ public class UserEntity {
 	private String email;
 	private String password;
 	private Integer otp;
+	private String token;
 	private Boolean status;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "user")
+	List<Vendor> vendor;
+	
+	@JsonIgnore	
+	@OneToMany(mappedBy = "usercategory")
+	List<category> category;
 	
 	public Integer getuId() {
 		return uId;
@@ -53,6 +69,13 @@ public class UserEntity {
 	}
 	public void setOtp(Integer otp) {
 		this.otp = otp;
+	}
+	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 	public Boolean getStatus() {
 		return status;

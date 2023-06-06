@@ -13,11 +13,15 @@ import com.Bean.UserBean;
 import com.Entity.UserEntity;
 import com.Entity.resetentity;
 import com.Repository.UserRepository;
+import com.service.TokenGenerator;
 @CrossOrigin
 @RestController
 public class UserController {
 	@Autowired
 	UserRepository userrepo;
+	
+	@Autowired
+	TokenGenerator tkgen;
 	
 	@PostMapping("/SignUp")
 	public ResponseEntity<UserBean<UserEntity>> SignUp(@RequestBody UserEntity user)
@@ -43,7 +47,7 @@ public class UserController {
 		UserEntity tempUserByEmail = userrepo.findByEmail(email);
 		UserEntity tempuser = userrepo.findByEmailAndPassword(email,password);
 		UserBean<UserEntity> usr = new UserBean<>();
-		if(tempUserByEmail == null)
+		if(tempUserByEmail == null || tempuser == null)
 		{
 			usr.setData(null);
 			usr.setMsg("You can try ForgotPassword !!");
@@ -51,6 +55,10 @@ public class UserController {
 		}
 		else
 		{
+			String token = tkgen.generateToken(7);
+			tempuser.setToken(token);
+			userrepo.save(tempuser);
+			
 			usr.setData(tempuser);
 			usr.setMsg("Sucessfully login !!");
 			return ResponseEntity.ok(usr);
